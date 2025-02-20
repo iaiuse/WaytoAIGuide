@@ -11,7 +11,11 @@
   },
   "dependencies": {
     "@lark-base-open/js-sdk": "^0.4.0",
+    "@larksuiteoapi/node-sdk": "^1.42.0",
     "antd": "^5.24.1",
+    "cors": "^2.8.5",
+    "dotenv": "^16.4.7",
+    "express": "^4.21.2",
     "react": "^19.0.0",
     "react-dom": "^19.0.0"
   },

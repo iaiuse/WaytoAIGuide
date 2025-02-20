@@ -1,13 +1,9 @@
-import { useState, useEffect } from 'react'
+import { useState } from 'react'
 import { Input, Button, Card, Space, message, Descriptions, Typography } from 'antd'
+import { searchByPhoneNumber } from './api/feishu'
 import './App.css'
 
 const { Title, Text } = Typography
-
-const FEISHU_URLS = {
-  navigation: 'https://waytoagi.feishu.cn/wiki/VdehwGVeQiODhYkYWHqcVUrMnOe',
-  schedule: 'https://waytoagi.feishu.cn/wiki/RqpVwQHteiBNhmkjanacF1R8nzf'
-}
 
 interface SearchResult {
   name?: string
@@ -22,32 +18,6 @@ function App() {
   const [loading, setLoading] = useState(false)
   const [hasSearched, setHasSearched] = useState(false)
   const [searchResult, setSearchResult] = useState<SearchResult | null>(null)
-  const [navigationContent, setNavigationContent] = useState('')
-  const [scheduleContent, setScheduleContent] = useState('')
-
-  useEffect(() => {
-    // 获取飞书文档内容
-    const fetchFeishuContent = async () => {
-      try {
-        const [navigationRes, scheduleRes] = await Promise.all([
-          fetch(FEISHU_URLS.navigation),
-          fetch(FEISHU_URLS.schedule)
-        ])
-
-        if (navigationRes.ok && scheduleRes.ok) {
-          const navigationText = await navigationRes.text()
-          const scheduleText = await scheduleRes.text()
-          setNavigationContent(navigationText)
-          setScheduleContent(scheduleText)
-        }
-      } catch (error) {
-        console.error('获取飞书文档内容失败:', error)
-        message.error('获取导航信息失败，请稍后再试')
-      }
-    }
-
-    fetchFeishuContent()
-  }, [])
 
   const handleSearch = async () => {
     if (!/^1[3-9]\d{9}$/.test(phoneNumber)) {
@@ -58,18 +28,15 @@ function App() {
     setLoading(true)
     setHasSearched(true)
     try {
-      // TODO: 实现飞书多维表格查询逻辑
-      const mockResult = {
-        name: '小兔兔',
-        city: '北京',
-        room: 'A座3层301会议室',
-        navigation: navigationContent || '从大厅进入A座，乘坐电梯到3层，右转第二个房间即是301会议室。',
-        schedule: scheduleContent || '9:00-12:00 切磋交流会\n13:30-17:00 技术分享会'
+      const result = await searchByPhoneNumber(phoneNumber)
+      if (result) {
+        setSearchResult(result)
+      } else {
+        setSearchResult(null)
+        message.warning('抱歉，没有找到对应的船票信息 (´;ω;｀)')
       }
-      
-      await new Promise(resolve => setTimeout(resolve, 1000))
-      setSearchResult(mockResult)
     } catch (error) {
+      console.error('查询失败:', error)
       message.error('呜呜~查询失败了，要不要稍后再试试看？ (｡•́︿•̀｡)')
       setSearchResult(null)
     } finally {
