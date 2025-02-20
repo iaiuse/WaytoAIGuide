@@ -1,5 +1,3 @@
-import { Client } from '@larksuiteoapi/node-sdk';
-
 interface Env {
   FEISHU_APP_ID: string;
   FEISHU_APP_SECRET: string;
@@ -13,24 +11,39 @@ interface SearchResult {
   schedule: string;
 }
 
+async function getTenantAccessToken(env: Env): Promise<string> {
+  const response = await fetch('https://open.feishu.cn/open-apis/auth/v3/tenant_access_token/internal', {
+    method: 'POST',
+    headers: {
+      'Content-Type': 'application/json'
+    },
+    body: JSON.stringify({
+      app_id: env.FEISHU_APP_ID,
+      app_secret: env.FEISHU_APP_SECRET
+    })
+  });
+
+  const data = await response.json();
+  if (data.code === 0) {
+    return data.tenant_access_token;
+  }
+  throw new Error(`获取tenant_access_token失败: ${data.msg}`);
+}
+
 export const onRequestPost = async (context: { request: Request, env: Env }) => {
   const { request, env } = context;
   
   try {
     const { phoneNumber } = await request.json();
+    const token = await getTenantAccessToken(env);
     
-    const client = new Client({
-      appId: env.FEISHU_APP_ID,
-      appSecret: env.FEISHU_APP_SECRET,
-      disableTokenCache: true
-    });
-
-    const response = await client.bitable.v1.appTableRecord.search({
-      path: {
-        app_token: 'bascnCMVMYQBXtsFWQZcXWeznuh',
-        table_id: 'tblGUJIVwlsz0zs3', // 替换为实际的飞书多维表格 table_id
+    const response = await fetch('https://open.feishu.cn/open-apis/bitable/v1/apps/bascnCMVMYQBXtsFWQZcXWeznuh/tables/tblGUJIVwlsz0zs3/records/search', {
+      method: 'POST',
+      headers: {
+        'Authorization': `Bearer ${token}`,
+        'Content-Type': 'application/json'
       },
-      data: {
+      body: JSON.stringify({
         filter: {
           conjunction: 'and',
           conditions: [
@@ -42,11 +55,13 @@ export const onRequestPost = async (context: { request: Request, env: Env }) => 
           ]
         },
         field_names: ['姓名', '城市', '会议室', '导航信息', '日程安排']
-      }
+      })
     });
 
-    if (response.data.items && response.data.items.length > 0) {
-      const record = response.data.items[0];
+    const data = await response.json();
+
+    if (data.data.items && data.data.items.length > 0) {
+      const record = data.data.items[0];
       const result: SearchResult = {
         name: record.fields['姓名'] as string,
         city: record.fields['城市'] as string,

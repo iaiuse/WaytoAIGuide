@@ -126,7 +126,7 @@ router.post('/search', async (req, res) => {
       }
     });
 
-    if (response.data.items && response.data.items.length > 0) {
+    if (response?.data?.items && response.data.items.length > 0) {
       const record = response.data.items[0];
       const result: SearchResult = {
         registrationId: record.fields['编号'] as string,
@@ -161,12 +161,12 @@ router.post('/search', async (req, res) => {
 router.get('/content', async (req, res) => {
   try {
     const [navigationRes, scheduleRes] = await Promise.all([
-      fetch(FEISHU_URLS.navigation),
-      fetch(FEISHU_URLS.schedule)
+      axios.get(FEISHU_URLS.navigation as string),
+fetch(FEISHU_URLS.schedule as string)
     ]);
 
-    if (navigationRes.ok && scheduleRes.ok) {
-      const navigationText = await navigationRes.text();
+    if (navigationRes.status === 200 && scheduleRes.status === 200) {
+      const navigationText = navigationRes.data;
       const scheduleText = await scheduleRes.text();
       res.json({
         navigation: navigationText,
