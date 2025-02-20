@@ -1,0 +1,132 @@
+#root {
+  max-width: 1280px;
+  margin: 0 auto;
+  padding: 2rem;
+  text-align: center;
+}
+
+.logo {
+  height: 6em;
+  padding: 1.5em;
+  will-change: filter;
+  transition: filter 300ms;
+}
+.logo:hover {
+  filter: drop-shadow(0 0 2em #646cffaa);
+}
+.logo.react:hover {
+  filter: drop-shadow(0 0 2em #61dafbaa);
+}
+
+@keyframes logo-spin {
+  from {
+    transform: rotate(0deg);
+  }
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+@media (prefers-reduced-motion: no-preference) {
+  a:nth-of-type(2) .logo {
+    animation: logo-spin infinite 20s linear;
+  }
+}
+
+.card {
+  padding: 2em;
+}
+
+.read-the-docs {
+  color: #888;
+}
+
+.app-container {
+  min-height: 100vh;
+  background: linear-gradient(135deg, #1a1a2e 0%, #16213e 100%);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  padding: 20px;
+}
+
+.content-wrapper {
+  width: 100%;
+  max-width: 600px;
+}
+
+.search-card {
+  background: rgba(255, 255, 255, 0.1) !important;
+  backdrop-filter: blur(10px);
+  border: 1px solid rgba(255, 255, 255, 0.2) !important;
+  transition: all 0.3s ease;
+}
+
+.search-card.searched {
+  transform: translateY(-20px);
+}
+
+.search-card .ant-card-head {
+  background: transparent;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.2);
+}
+
+.search-card .ant-card-body {
+  padding: 24px;
+}
+
+.ant-input {
+  background: rgba(255, 255, 255, 0.1) !important;
+  border: 1px solid rgba(255, 255, 255, 0.2) !important;
+  color: #fff !important;
+}
+
+.ant-input::placeholder {
+  color: rgba(255, 255, 255, 0.5);
+}
+
+.ant-btn-primary {
+  background: linear-gradient(45deg, #00b4db, #0083b0) !important;
+  border: none !important;
+  box-shadow: 0 4px 15px rgba(0, 180, 219, 0.3);
+}
+
+.ant-btn-primary:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 6px 20px rgba(0, 180, 219, 0.4);
+}
+
+.welcome-message {
+  text-align: center;
+  margin-bottom: 20px;
+}
+
+.result-descriptions {
+  background: rgba(255, 255, 255, 0.1) !important;
+  border-radius: 8px;
+  overflow: hidden;
+}
+
+.result-descriptions .ant-descriptions-item-label {
+  background: rgba(255, 255, 255, 0.1) !important;
+  color: rgba(255, 255, 255, 0.8) !important;
+}
+
+.result-descriptions .ant-descriptions-item-content {
+  color: #fff !important;
+}
+
+.not-found-message {
+  text-align: center;
+  padding: 20px;
+}
+
+@keyframes glow {
+  0% { box-shadow: 0 0 5px rgba(0, 180, 219, 0.3); }
+  50% { box-shadow: 0 0 20px rgba(0, 180, 219, 0.5); }
+  100% { box-shadow: 0 0 5px rgba(0, 180, 219, 0.3); }
+}
+
+.ant-btn-primary {
+  animation: glow 2s infinite;
+}
