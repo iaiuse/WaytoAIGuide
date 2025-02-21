@@ -1,0 +1,27 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>飞书表格数据</title>
+</head>
+<body>
+    <h1>飞书表格数据</h1>
+    <div id="result"></div>
+
+    <script>
+        const tableId = 'tblNjieZ8lfLHX5W';
+        const bitableId = 'Fv2OwmQISi5fOtkIuX2cF0vKnXg';
+
+        // 使用相对路径，这样在本地和生产环境都能正常工作
+        fetch(`/api/bitable/${tableId}/${bitableId}`)
+            .then(response => response.json())
+            .then(data => {
+                document.getElementById('result').innerHTML = 
+                    `<pre>${JSON.stringify(data, null, 2)}</pre>`;
+            })
+            .catch(error => {
+                document.getElementById('result').innerHTML = 
+                    `<p style="color: red">错误: ${error.message}</p>`;
+            });
+    </script>
+</body>
+</html> 
