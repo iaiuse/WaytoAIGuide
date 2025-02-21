@@ -56,11 +56,7 @@ function App() {
         <Space direction="vertical" size="large" style={{ width: '100%' }}>
           <Card 
             className={`search-card ${hasSearched ? 'searched' : ''}`}
-            title={
-              <Title level={3} style={{ color: '#fff', margin: 0 }}>
-                欢迎来到AI宇宙中心 🚀
-              </Title>
-            }
+            title={<Title level={3} style={{ color: '#fff', margin: 0 }}>欢迎来到AI宇宙中心 🚀</Title>}
           >
             {!hasSearched ? (
               <Space direction="vertical" style={{ width: '100%' }}>
@@ -114,6 +110,11 @@ function App() {
             )}
           </Card>
         </Space>
+      </div>
+      <div className="footer">
+        <Text style={{ color: 'rgba(255, 255, 255, 0.45)', fontSize: '0.9em' }}>
+          大雨 & CT 基于 Trea 构建
+        </Text>
       </div>
     </div>
   )
