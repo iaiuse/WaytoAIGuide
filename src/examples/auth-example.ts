@@ -20,10 +20,7 @@ async function handleAuth() {
 
     // 示例：在token即将过期时刷新
     setTimeout(async () => {
-      const refreshResult = await authService.refreshToken(
-        result.refreshToken!,
-        ['contact:contact:readonly', 'bitable:app:readonly']  // 可选的scope限制
-      );
+      const refreshResult = await authService.refreshToken(result.refreshToken!);
 
       if (refreshResult.success) {
         console.log('Token refreshed successfully!');

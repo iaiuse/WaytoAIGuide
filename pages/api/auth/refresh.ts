@@ -12,12 +12,13 @@ export default async function handler(
   }
 
   try {
-    const { refreshToken } = req.body;
-    if (!refreshToken) {
-      return res.status(401).json({ error: 'No refresh token provided' });
+    // 从存储中获取当前的 token
+    const currentTokens = AuthService.getTokens();
+    if (!currentTokens) {
+      return res.status(401).json({ error: 'No tokens available' });
     }
 
-    const refreshResult = await authService.refreshToken(refreshToken);
+    const refreshResult = await authService.refreshToken(currentTokens.refreshToken);
     if (refreshResult.success) {
       res.json({
         success: true,

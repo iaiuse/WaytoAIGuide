@@ -16,10 +16,17 @@ interface FeishuConfig {
   baseUrl: string;
 }
 
+interface TokenInfo {
+  accessToken: string;
+  refreshToken: string;
+  expiresAt: number;
+}
+
 export class AuthService {
   private authManager: AuthManager;
   private tokenManager: TokenManager;
   private state: string;
+  private static tokenStore: TokenInfo | null = null;
 
   constructor() {
     const config: FeishuConfig = {
@@ -64,25 +71,42 @@ export class AuthService {
     return this.authManager.getAuthorizationUrl(this.state);
   }
 
+  // 静态方法用于设置 tokens
+  static setTokens(tokens: TokenInfo) {
+    AuthService.tokenStore = tokens;
+  }
+
+  // 静态方法用于获取 tokens
+  static getTokens(): TokenInfo | null {
+    return AuthService.tokenStore;
+  }
+
   /**
    * 刷新访问令牌
    */
-  async refreshToken(
-    refreshToken: string,
-    scopes?: string[]
-  ): Promise<AuthResult> {
+  async refreshToken(refreshToken: string): Promise<AuthResult> {
     try {
       const tokenResponse = await this.tokenManager.refreshUserAccessToken(
-        refreshToken,
-        scopes
+        refreshToken
       );
 
-      return {
+      const result = {
         success: true,
         accessToken: tokenResponse.access_token,
         refreshToken: tokenResponse.refresh_token,
         expiresIn: tokenResponse.expires_in,
       };
+
+      // 更新存储的 tokens
+      if (result.success) {
+        AuthService.setTokens({
+          accessToken: result.accessToken!,
+          refreshToken: result.refreshToken!,
+          expiresAt: Date.now() + (result.expiresIn! * 1000)
+        });
+      }
+
+      return result;
     } catch (error) {
       return {
         success: false,
