@@ -13,7 +13,7 @@ export default async function handler(
 
   try {
     // 从存储中获取当前的 token
-    const currentTokens = AuthService.getTokens();
+    const currentTokens = await AuthService.getTokens();
     if (!currentTokens) {
       return res.status(401).json({ error: 'No tokens available' });
     }

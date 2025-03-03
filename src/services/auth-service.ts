@@ -1,5 +1,7 @@
 import { AuthManager } from '../clients/auth-manager';
 import { TokenManager } from '../clients/token-manager';
+import fs from 'fs/promises';
+import path from 'path';
 
 interface AuthResult {
   success: boolean;
@@ -20,13 +22,14 @@ interface TokenInfo {
   accessToken: string;
   refreshToken: string;
   expiresAt: number;
+  appId?: string;
 }
 
 export class AuthService {
   private authManager: AuthManager;
   private tokenManager: TokenManager;
   private state: string;
-  private static tokenStore: TokenInfo | null = null;
+  private static tokenFilePath = path.join(process.cwd(), 'data', 'tokens.json');
 
   constructor() {
     const config: FeishuConfig = {
@@ -71,14 +74,18 @@ export class AuthService {
     return this.authManager.getAuthorizationUrl(this.state);
   }
 
-  // 静态方法用于设置 tokens
-  static setTokens(tokens: TokenInfo) {
-    AuthService.tokenStore = tokens;
+  static async setTokens(tokens: TokenInfo) {
+    await fs.mkdir(path.dirname(this.tokenFilePath), { recursive: true });
+    await fs.writeFile(this.tokenFilePath, JSON.stringify(tokens, null, 2));
   }
 
-  // 静态方法用于获取 tokens
-  static getTokens(): TokenInfo | null {
-    return AuthService.tokenStore;
+  static async getTokens(): Promise<TokenInfo | null> {
+    try {
+      const data = await fs.readFile(this.tokenFilePath, 'utf-8');
+      return JSON.parse(data);
+    } catch (error) {
+      return null;
+    }
   }
 
   /**
@@ -99,7 +106,7 @@ export class AuthService {
 
       // 更新存储的 tokens
       if (result.success) {
-        AuthService.setTokens({
+        await AuthService.setTokens({
           accessToken: result.accessToken!,
           refreshToken: result.refreshToken!,
           expiresAt: Date.now() + (result.expiresIn! * 1000)

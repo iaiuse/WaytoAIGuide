@@ -5,7 +5,8 @@ export default function DebugSetToken() {
     accessToken: '',
     refreshToken: '',
     expiresIn: '7200',
-    apiSecret: 'your-api-secret-key'
+    apiSecret: 'your-api-secret-key',
+    appId: process.env.NEXT_PUBLIC_FEISHU_APP_ID || ''
   });
 
   const handleSubmit = async (e: React.FormEvent) => {
